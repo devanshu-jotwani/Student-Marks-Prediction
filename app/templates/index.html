@@ -6,17 +6,17 @@
     <title>Student Prediction System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="apple-touch-icon" href="{% static '/img/apple-icon.png'%}">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static '/img/favicon.ico'%}">
+    <link rel="apple-touch-icon" href="{% static 'app/img/apple-icon.png'%}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'app/img/favicon.ico'%}">
     <!-- Load Require CSS -->
-    <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
+    <link href="{% static 'app/css/bootstrap.min.css'%}" rel="stylesheet">
     <!-- Font CSS -->
-    <link href="{% static '/css/boxicon.min.css'%}" rel="stylesheet">
+    <link href="{% static 'app/css/boxicon.min.css'%}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Load Tempalte CSS -->
-    <link rel="stylesheet" href="{% static '/css/templatemo.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/templatemo.css' %}">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static '/css/custom.css'%}">
+    <link rel="stylesheet" href="{% static 'app/css/custom.css'%}">
 </head>
 
 <body>
@@ -92,7 +92,7 @@
                 <!-- Start Recent Work -->
                 <div class="col-md-4 mb-3">
                     <a href="{% url 'predictions' %}" class="recent-work card border-0 shadow-lg overflow-hidden">
-                        <img class="recent-work-img card-img" src="{% statci '/img/recent-work-01.jpg'%}" alt="Card image">
+                        <img class="recent-work-img card-img" src="{% static 'app/img/recent-work-01.jpg'%}" alt="Card image">
                         <div class="recent-work-vertical card-img-overlay d-flex align-items-end">
                             <div class="recent-work-content text-start mb-3 ml-3 text-dark">
                                 <h3 class="card-title light-300">Prediction</h3>
@@ -106,7 +106,7 @@
                 <!-- Start Recent Work -->
                 <div class="col-md-4 mb-3">
                     <a href="#" class="recent-work card border-0 shadow-lg overflow-hidden">
-                        <img class="recent-work-img card-img" src="{% static '/img/recent-work-02.jpg'%}" alt="Card image">
+                        <img class="recent-work-img card-img" src="{% static 'app/img/recent-work-02.jpg'%}" alt="Card image">
                         <div class="recent-work-vertical card-img-overlay d-flex align-items-end">
                             <div class="recent-work-content text-start mb-3 ml-3 text-dark">
                                 <h3 class="card-title light-300">Test your own data</h3>
@@ -250,11 +250,11 @@ End Footer -->
 
 
     <!-- Bootstrap -->
-    <script src="{% static /js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'app/js/bootstrap.bundle.min.js'%}"></script>
     <!-- Load jQuery require for isotope -->
-    <script src="{%static '/js/jquery.min.js' %}"></script>
+    <script src="{%static 'app/js/jquery.min.js' %}"></script>
     <!-- Isotope -->
-    <script src="{% static '/js/isotope.pkgd.js'%}"></script>
+    <script src="{% static 'app/js/isotope.pkgd.js'%}"></script>
     <!-- Page Script -->
     <script>
         $(window).load(function() {
@@ -277,9 +277,9 @@ End Footer -->
         });
     </script>
     <!-- Templatemo -->
-    <script src="{% static '/js/templatemo.js'%}"></script>
+    <script src="{% static 'app/js/templatemo.js'%}"></script>
     <!-- Custom -->
-    <script src="{% static '/js/custom.js'%}"></script>
+    <script src="{% static 'app/js/custom.js'%}"></script>
 
 </body>
 

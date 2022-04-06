@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,17 +6,17 @@
     <title>Predict Page</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="apple-touch-icon" href="{% static '/img/apple-icon.png'%}">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static '/img/favicon.ico'%}">
+    <link rel="apple-touch-icon" href="{% static 'app/img/apple-icon.png'%}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'app/img/favicon.ico'%}">
     <!-- Load Require CSS -->
-    <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
+    <link href="{% static 'app/css/bootstrap.min.css'%}" rel="stylesheet">
     <!-- Font CSS -->
-    <link href="{% static '/css/boxicon.min.css'%}" rel="stylesheet">
+    <link href="{% static 'app/css/boxicon.min.css'%}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Load Tempalte CSS -->
-    <link rel="stylesheet" href="{% static '/css/templatemo.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/templatemo.css' %}">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static '/css/custom.css'%}">
+    <link rel="stylesheet" href="{% static 'app/css/custom.css'%}">
     <!--
     
 TemplateMo 561 Purple Buzz
@@ -29,7 +30,7 @@ https://templatemo.com/tm-561-purple-buzz
     <!-- Header -->
     <nav id="main_nav" class="navbar navbar-expand-lg navbar-light bg-white shadow">
         <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand h1" href="index.html">
+            <a class="navbar-brand h1" href="{% url 'home' %}">
                 <i class='bx bx-journal-text bx-sm text-dark'></i>
                 <span class="text-primary h4">Student Prediction System</span>
             </a>
@@ -41,17 +42,15 @@ https://templatemo.com/tm-561-purple-buzz
                 <div class="flex-fill mx-xl-5 mb-2">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-xl-5 text-center text-dark">
                         <li class="nav-item">
-                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="index.html">Home</a>
+                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="{% url 'home' %}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="about.html">About</a>
+                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="{% url 'analysis' %}">Analysis</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="Prediction.html">Predict</a>
+                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="{% url 'predictions' %}">Predict</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="contact.html">Contact</a>
-                        </li>
+
                     </ul>
                 </div>
                 <div class="navbar align-self-center d-flex">

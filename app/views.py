@@ -69,7 +69,7 @@ model2(x_train,y_train,x_test,y_test)
 
 def home(request):
 
-    return render(request,"home.html",{})
+    return render(request,"index.html",{})
 
 
 def analysis(request):
@@ -93,8 +93,8 @@ def predict(request):
         if sem1>10 or sem1<0 and sem2>10 or sem2<0 and sem3>10 or sem3<0 and sem4>10 or sem4<0 and sem5>10 or sem5<0 and sem6>10 or sem6<0:
             error=True
         if error:
-            return render(request,"predict.html",{error:error})
+            return render(request,"prediction.html",{error:error})
         else:
-            return render(request,"predict.html",context)
+            return render(request,"prediction.html",context)
     else:
-        return render(request,"predict.html",{})
+        return render(request,"prediction.html",{})
