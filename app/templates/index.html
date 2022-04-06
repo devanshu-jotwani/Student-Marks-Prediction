@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,24 +6,24 @@
     <title>Student Prediction System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <link rel="apple-touch-icon" href="{% static '/img/apple-icon.png'%}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static '/img/favicon.ico'%}">
     <!-- Load Require CSS -->
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
     <!-- Font CSS -->
-    <link href="assets/css/boxicon.min.css" rel="stylesheet">
+    <link href="{% static '/css/boxicon.min.css'%}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Load Tempalte CSS -->
-    <link rel="stylesheet" href="assets/css/templatemo.css">
+    <link rel="stylesheet" href="{% static '/css/templatemo.css' %}">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/custom.css">
+    <link rel="stylesheet" href="{% static '/css/custom.css'%}">
 </head>
 
 <body>
     <!-- Header -->
     <nav id="main_nav" class="navbar navbar-expand-lg navbar-light bg-white shadow">
         <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand h1" href="index.html">
+            <a class="navbar-brand h1" href="{% url 'home' %}">
                 <i class='bx bx-journal-text bx-sm text-dark'></i>
                 <span class="text-primary h4">Student Prediction System</span>
             </a>
@@ -34,17 +35,15 @@
                 <div class="flex-fill mx-xl-5 mb-2">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-xl-5 text-center text-dark">
                         <li class="nav-item">
-                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="index.html">Home</a>
+                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="{% url 'home' %}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="about.html">About</a>
+                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="{% url 'analysis' %}">Analysis</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="Prediction.html">Predict</a>
+                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="{% url 'predictions' %}">Predict</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn-outline-primary rounded-pill px-3" href="contact.html">Contact</a>
-                        </li>
+
                     </ul>
                 </div>
                 <div class="navbar align-self-center d-flex">
@@ -70,7 +69,8 @@
                 </div>
             </div>
             <p class="service-footer col-10 offset-2 col-lg-9 offset-lg-3 text-start pb-3 text-muted px-2">
-                The academic achievement of university students is the most important benchmark to compare the quality of university students. It serves as the basic criteria for university to monitor the quality of teaching and learning and for university to evaluate and select students. One of the most challenging tasks in the education sector in India is to predict student's academic performance due to a huge volume of student data.
+                The academic achievement of university students is the most important benchmark to compare the quality of university students. It serves as the basic criteria for university to monitor the quality of teaching and learning and for university to evaluate
+                and select students. One of the most challenging tasks in the education sector in India is to predict student's academic performance due to a huge volume of student data.
             </p>
         </div>
 
@@ -91,8 +91,8 @@
 
                 <!-- Start Recent Work -->
                 <div class="col-md-4 mb-3">
-                    <a href="prediction.html" class="recent-work card border-0 shadow-lg overflow-hidden">
-                        <img class="recent-work-img card-img" src="./assets/img/recent-work-01.jpg" alt="Card image">
+                    <a href="{% url 'predictions' %}" class="recent-work card border-0 shadow-lg overflow-hidden">
+                        <img class="recent-work-img card-img" src="{% statci '/img/recent-work-01.jpg'%}" alt="Card image">
                         <div class="recent-work-vertical card-img-overlay d-flex align-items-end">
                             <div class="recent-work-content text-start mb-3 ml-3 text-dark">
                                 <h3 class="card-title light-300">Prediction</h3>
@@ -100,12 +100,13 @@
                             </div>
                         </div>
                     </a>
-                </div><!-- End Recent Work -->
+                </div>
+                <!-- End Recent Work -->
 
                 <!-- Start Recent Work -->
                 <div class="col-md-4 mb-3">
                     <a href="#" class="recent-work card border-0 shadow-lg overflow-hidden">
-                        <img class="recent-work-img card-img" src="./assets/img/recent-work-02.jpg" alt="Card image">
+                        <img class="recent-work-img card-img" src="{% static '/img/recent-work-02.jpg'%}" alt="Card image">
                         <div class="recent-work-vertical card-img-overlay d-flex align-items-end">
                             <div class="recent-work-content text-start mb-3 ml-3 text-dark">
                                 <h3 class="card-title light-300">Test your own data</h3>
@@ -113,9 +114,10 @@
                             </div>
                         </div>
                     </a>
-                </div><!-- End Recent Work -->
+                </div>
+                <!-- End Recent Work -->
 
-                
+
 
             </div>
         </div>
@@ -227,32 +229,32 @@
             </div>
         </div>
 End Footer -->
-        <div class="w-100 bg-primary py-3">
-            <div class="container">
-                <div class="row pt-2">
-                    <div class="col-lg-6 col-sm-12">
-                        <p class="text-lg-start text-center text-light light-300">
-                            © Group-36 BE C2
-                        </p>
-                    </div>
-                    <div class="col-lg-6 col-sm-12">
-                        <p class="text-lg-end text-center text-light light-300">
-                            Designed by <a rel="sponsored" class="text-decoration-none text-light" href="https://templatemo.com/" target="_blank"><strong>Group 36 C22</strong></a>
-                        </p>
-                    </div>
+    <div class="w-100 bg-primary py-3">
+        <div class="container">
+            <div class="row pt-2">
+                <div class="col-lg-6 col-sm-12">
+                    <p class="text-lg-start text-center text-light light-300">
+                        © Group-36 BE C2
+                    </p>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <p class="text-lg-end text-center text-light light-300">
+                        Designed by <a rel="sponsored" class="text-decoration-none text-light" href="https://templatemo.com/" target="_blank"><strong>Group 36 C22</strong></a>
+                    </p>
                 </div>
             </div>
         </div>
+    </div>
 
     </footer>
-    
+
 
     <!-- Bootstrap -->
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static /js/bootstrap.bundle.min.js'%}"></script>
     <!-- Load jQuery require for isotope -->
-    <script src="assets/js/jquery.min.js"></script>
+    <script src="{%static '/js/jquery.min.js' %}"></script>
     <!-- Isotope -->
-    <script src="assets/js/isotope.pkgd.js"></script>
+    <script src="{% static '/js/isotope.pkgd.js'%}"></script>
     <!-- Page Script -->
     <script>
         $(window).load(function() {
@@ -275,9 +277,9 @@ End Footer -->
         });
     </script>
     <!-- Templatemo -->
-    <script src="assets/js/templatemo.js"></script>
+    <script src="{% static '/js/templatemo.js'%}"></script>
     <!-- Custom -->
-    <script src="assets/js/custom.js"></script>
+    <script src="{% static '/js/custom.js'%}"></script>
 
 </body>
 

@@ -10,10 +10,35 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
+from sklearn import metrics
+from sklearn.metrics import mean_squared_error as mse
+
+#DATA PROCESSING
+#reading the cleaned data
+df=pd.read_csv("../studentdata1.csv")
+
+#dividing the column into x and y
+x=df[['10th','12th','sem3','sem2','sem1','sem5','sem4']]
+y=df[['sem6']]
+
+'''
+Preprocessing data. Scaling input data so
+that all the input data lie between 0 to 1
+'''
+min_max_scaler = preprocessing.MinMaxScaler()
+X_scale = min_max_scaler.fit_transform(x)
+
+
+#splitting data into train ,test and validation data
+x_train,x_test,y_train,y_test=train_test_split(X_scale,y, train_size=100)
+#print(x_train.shape,x_test.shape)
+
+
 
 def model1(x_train,y_train,x_test,y_test):
     #defining the model layers
+    #model=NN
     model=Sequential([
         Dense(64,activation='relu',input_dim=7),
         Dense(64,activation='relu'),
@@ -26,44 +51,26 @@ def model1(x_train,y_train,x_test,y_test):
     hist = model.fit(x_train, y_train,epochs=100, verbose=0,validation_data=(x_test,y_test))
     print(hist)
     print(model.evaluate(x_test, y_test))
-
+model1(x_train,y_train,x_test,y_test)
 
 def model2(x_train,y_train,x_test,y_test):
-    classifier = DecisionTreeClassifier()
-    classifier.fit(x_train, y_train)
+    #model= DTR 
+    DTRModel = DecisionTreeRegressor()
+    DTRModel.fit(x_train, y_train)
 
-    y_pred = classifier.predict(x_test)
-    print("------------------")
-    print(y_pred)
-    print("------------------")
+    y_pred = DTRModel.predict(x_test)
+    #result=pd.DataFrame({"Actual:":y_test,"Predicted":y_pred})
+    #print(result)
 
-def splitting_inputs():
-    #reading the cleaned data
-    df=pd.read_csv("studentdata1.csv")
+    print("Mean Squared Error ",mse(y_test,y_pred))
+    print("Mean Absolute Error ",metrics.median_absolute_error(y_test,y_pred))
+model2(x_train,y_train,x_test,y_test)
 
-    #dividing the column into x and y
-    x=df[['10th','12th','sem3','sem2','sem1','sem5','sem4']]
-    y=df[['sem6']]
-
-    '''
-    Preprocessing data. Scaling input data so
-    that all the input data lie between 0 to 1
-    '''
-    min_max_scaler = preprocessing.MinMaxScaler()
-    X_scale = min_max_scaler.fit_transform(x)
-
-    #print(X_scale[0:10])
-    #print(y)
-
-    #splitting data into train ,test and validation data
-    x_train,x_test,y_train,y_test=train_test_split(X_scale,y, train_size=100)
-    #print(x_train.shape,x_test.shape)
-
-    return (x_train,x_test,y_train,y_test)
 
 def home(request):
-    x_train,x_test,y_train,y_test=splitting_inputs()
+
     return render(request,"home.html",{})
+
 
 def analysis(request):
     context={}
@@ -71,6 +78,7 @@ def analysis(request):
 
 def predict(request):
     context={}
+    error=False
     if request.method=="POST":
         tenthmark=request.POST["tenth"]
         twelth=request.POST['twelth']
@@ -80,8 +88,13 @@ def predict(request):
         sem4=request.POST['sem4']
         sem5=request.POST['sem5']
         sem6=request.POST['sem6']
-        lassiscore=request.POST['lassi']
-
-        return render(request,"predict.html",context)
+        if twelth>100 or twelth<0 and tenthmark>100 or tenthmark<0:
+            error=True
+        if sem1>10 or sem1<0 and sem2>10 or sem2<0 and sem3>10 or sem3<0 and sem4>10 or sem4<0 and sem5>10 or sem5<0 and sem6>10 or sem6<0:
+            error=True
+        if error:
+            return render(request,"predict.html",{error:error})
+        else:
+            return render(request,"predict.html",context)
     else:
         return render(request,"predict.html",{})
