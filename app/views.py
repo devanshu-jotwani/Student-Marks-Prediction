@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 # Create your views here.
  
 from .models import Student
 
-
+import joblib
 import pandas as pd
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
@@ -11,6 +11,8 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
+
 from sklearn import metrics
 from sklearn.metrics import mean_squared_error as mse
 
@@ -51,30 +53,54 @@ def model1(x_train,y_train,x_test,y_test):
     hist = model.fit(x_train, y_train,epochs=100, verbose=0,validation_data=(x_test,y_test))
     print(hist)
     print(model.evaluate(x_test, y_test))
+    filename="NN.sav"
+    joblib.dump(model,filename)
+
 model1(x_train,y_train,x_test,y_test)
 
 def model2(x_train,y_train,x_test,y_test):
     #model= DTR 
     DTRModel = DecisionTreeRegressor()
     DTRModel.fit(x_train, y_train)
+    # save the model to disk
+    filename = 'DTR.sav'
+    joblib.dump(DTRModel, filename)
 
     y_pred = DTRModel.predict(x_test)
-    #result=pd.DataFrame({"Actual:":y_test,"Predicted":y_pred})
-    #print(result)
+    print("Predicted DTR Model")
+    return y_pred
+    
 
-    print("Mean Squared Error ",mse(y_test,y_pred))
-    print("Mean Absolute Error ",metrics.median_absolute_error(y_test,y_pred))
-model2(x_train,y_train,x_test,y_test)
+    
+DTRpred=model2(x_train,y_train,x_test,y_test)
+
+def model3(x_train,y_train,x_test,y_test):
+    #model=LR
+    LRModel=LinearRegression()
+    LRModel.fit(x_train,y_train)
+    
+    y_pred=LRModel.predict(x_test)
+    y_pred=[round(item,2) for sublist in y_pred for item in sublist]
+    print("Predicted Linear regression")
+    return y_pred
+LRpred=model3(x_train,y_train,x_test,y_test)
 
 
+def model4(x_train,y_train,x_test,y_test):
+    #Decision Tree Classifier
+    result=0
+
+NBpred=model4(x_train,y_train,x_test,y_test)
 def home(request):
 
     return render(request,"index.html",{})
 
 
+
 def analysis(request):
-    context={}
-    return render(request,"analysis.html",context)
+    
+    
+    return render(request,"analysis.html",{})
 
 def predict(request):
     context={}
@@ -95,6 +121,17 @@ def predict(request):
         if error:
             return render(request,"prediction.html",{error:error})
         else:
-            return render(request,"prediction.html",context)
+            #Transforming input data
+            unseenData=[[tenthmark,twelth,sem1,sem2,sem3,sem4,sem5]]
+            eval_X=min_max_scaler.fit_transform(unseenData)
+            prediction=analyze_unseen_data(eval_X,sem6)
+            
+            return redirect(request,"prediction.html",{'prediction':prediction})
     else:
         return render(request,"prediction.html",{})
+
+
+def analyze_unseen_data(eval_x,output):
+    result=0
+
+    return result
