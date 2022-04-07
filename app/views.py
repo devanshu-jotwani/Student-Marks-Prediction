@@ -1,16 +1,19 @@
+from fileinput import filename
 from django.shortcuts import render,redirect
+
+from sklearn.ensemble import RandomForestRegressor
 # Create your views here.
  
 from .models import Student
 
 import joblib
 import pandas as pd
-from sklearn import preprocessing
+from sklearn import naive_bayes, preprocessing
 from sklearn.model_selection import train_test_split
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression
 
 from sklearn import metrics
@@ -37,7 +40,7 @@ x_train,x_test,y_train,y_test=train_test_split(X_scale,y, train_size=100)
 #print(x_train.shape,x_test.shape)
 
 
-
+#Neural Network Model
 def model1(x_train,y_train,x_test,y_test):
     #defining the model layers
     #model=NN
@@ -51,13 +54,17 @@ def model1(x_train,y_train,x_test,y_test):
     #compiling the model
     model.compile(optimizer='sgd',loss='mean_squared_error',metrics=['accuracy'])
     hist = model.fit(x_train, y_train,epochs=100, verbose=0,validation_data=(x_test,y_test))
-    print(hist)
-    print(model.evaluate(x_test, y_test))
+    #print(hist)
+    y_pred=model.predict(x_test)
+    #print("NN Prediction- ",y_pred)
+    #print(model.evaluate(x_test, y_test))
     filename="NN.sav"
     joblib.dump(model,filename)
+    print("Neural Network Prediction Done")
+    return y_pred
+NNpred=model1(x_train,y_train,x_test,y_test)
 
-model1(x_train,y_train,x_test,y_test)
-
+#Decission Tree Regressor Model
 def model2(x_train,y_train,x_test,y_test):
     #model= DTR 
     DTRModel = DecisionTreeRegressor()
@@ -68,37 +75,126 @@ def model2(x_train,y_train,x_test,y_test):
 
     y_pred = DTRModel.predict(x_test)
     print("Predicted DTR Model")
-    return y_pred
-    
-
+    return y_pred    
     
 DTRpred=model2(x_train,y_train,x_test,y_test)
 
-def model3(x_train,y_train,x_test,y_test):
+#Linear Regression Model
+def model3(x_train,y_train,x_test):
     #model=LR
     LRModel=LinearRegression()
     LRModel.fit(x_train,y_train)
-    
+     
     y_pred=LRModel.predict(x_test)
     y_pred=[round(item,2) for sublist in y_pred for item in sublist]
+    filename='LR.sav'
+    joblib.dump(LRModel,filename)
+    
     print("Predicted Linear regression")
+    
     return y_pred
-LRpred=model3(x_train,y_train,x_test,y_test)
+LRpred=model3(x_train,y_train,x_test)
 
 
-def model4(x_train,y_train,x_test,y_test):
-    #Decision Tree Classifier
+#Random Forest Regressor
+def model4(x_train,y_train,x_test):
+    #random forest
     result=0
+    RFRModel=RandomForestRegressor(n_estimators=10,random_state=0)
+    RFRModel.fit(x_train,y_train)
+    y_pred=RFRModel.predict(x_test)
+    filename='RFR.sav'
+    joblib.dump(RFRModel,filename)
+    return y_pred
+RFRpred=model4(x_train,y_train,x_test)
 
-NBpred=model4(x_train,y_train,x_test,y_test)
+#Naive Bayes Model
+def model5(x_train,y_train,x_test):
+    #Naive Bayes Classifier
+    result=0
+    NBModel=0
+    NBModel.fit(x_train,y_train)
+    y_pred=NBModel.predict(x_test)
+
+    filename='NB.sav'
+    joblib.dump(NBModel,filename)
+    return y_pred
+
+#NBpred=model5(x_train,y_train,x_test)
+
+#Decision tree classifier
+def model6(x_train,y_train,x_test):
+    #Decision Tree Classifier
+    
+    DTCModel=DecisionTreeClassifier()
+    DTCModel.fit(x_train,y_train)
+    y_pred=DTCModel.predict(x_test)
+    filename='DTC.sav'
+    joblib.dump(DTCModel,filename)
+    return y_pred
+#DTCpred=model6(x_train,y_train,x_test)
+
+
+#Home Page view function
 def home(request):
 
     return render(request,"index.html",{})
 
 
-
+#Analyses Page view function
 def analysis(request):
-    
+    # #loading prediction models
+    # DTRModel=joblib.load('DTR.sav')
+    # LRModel=joblib.load("LR.sav")
+    # NNModel=joblib.load("NN.sav")
+    # #loading classifier models
+    # NBModel=joblib.load('NB.sav')
+    # DTCModel=joblib.load('DTC.sav')
+    from sklearn import metrics
+    print('Mean Absolute Error LR:', metrics.mean_absolute_error(y_test, LRpred))
+    print('Mean Squared Error LR:', metrics.mean_squared_error(y_test, LRpred))
+    print('Root Mean Squared Error LR:', np.sqrt(metrics.mean_squared_error(y_test, LRpred)))
+    context={
+            "NNModel":
+                {
+                    "MeanAbosoluteError":metrics.mean_absolute_error(y_test, NNpred),
+                    "MeanSquareError":metrics.mean_squared_error(y_test, NNpred),
+                    "RootMeanSquaredError":np.sqrt(metrics.mean_squared_error(y_test, NNpred))
+                },
+            "DTRModel":
+                {
+                    "MeanAbosoluteError":metrics.mean_absolute_error(y_test, DTRpred),
+                    "MeanSquareError":metrics.mean_squared_error(y_test, DTRpred),
+                    "RootMeanSquaredError":np.sqrt(metrics.mean_squared_error(y_test, DTRpred))
+                },
+            'LRModel':
+                {
+                    "MeanAbosoluteError":metrics.mean_absolute_error(y_test, LRpred),
+                    "MeanSquareError":metrics.mean_squared_error(y_test, LRpred),
+                    "RootMeanSquaredError":np.sqrt(metrics.mean_squared_error(y_test, LRpred))
+                },
+            "RFRModel":
+                {
+                    "MeanAbosoluteError":metrics.mean_absolute_error(y_test, RFRpred),
+                    "MeanSquareError":metrics.mean_squared_error(y_test, RFRpred),
+                    "RootMeanSquaredError":np.sqrt(metrics.mean_squared_error(y_test, RFRpred))
+                },
+            "DTCModel":
+                {
+
+                },
+            "NBModel":
+                {
+
+                }
+            }
+
+
+
+
+
+
+
     
     return render(request,"analysis.html",{})
 
