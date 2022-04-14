@@ -1,0 +1,58 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Predict Page</title>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="{% static 'app/img/apple-icon.png'%}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'app/img/favicon.ico'%}">
+    <!-- Load Require CSS -->
+    <link href="{% static 'app/css/bootstrap.min.css'%}" rel="stylesheet">
+    <!-- Font CSS -->
+    <link href="{% static 'app/css/boxicon.min.css'%}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Load Tempalte CSS -->
+    <link rel="stylesheet" href="{% static 'app/css/templatemo.css' %}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'app/css/custom.css'%}">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+
+<body>
+    {% include 'navbar.html'%}
+
+
+    <div class="container">
+        <h2 class="text-center"><u>Different Predicted Table</u></h2><br>
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Actual Value</th>
+                    <th>Linear Regression</th>
+                    <th>Random Forest Regressor</th>
+                    <th>Decision Tree Regressor</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <!-- jinja2 Technique -->
+                {% if table %} {% for i in table %}
+                <tr>
+                    <td>{{i.ActualValue}}</td>
+                    <td>{{i.LR}}</td>
+                    <td>{{i.RFR}}</td>
+                    <td>{{i.DTR}}</td>
+
+                </tr>
+                {% endfor %} {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>

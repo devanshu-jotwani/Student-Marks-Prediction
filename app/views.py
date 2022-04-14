@@ -1,3 +1,4 @@
+
 from fileinput import filename
 from django.shortcuts import render,redirect
 
@@ -33,7 +34,8 @@ that all the input data lie between 0 to 1
 '''
 min_max_scaler = preprocessing.MinMaxScaler()
 X_scale = min_max_scaler.fit_transform(x)
-
+#print("Before Scaling \n",x)
+#print("After Scaling \n",X_scale)
 
 #splitting data into train ,test and validation data
 x_train,x_test,y_train,y_test=train_test_split(X_scale,y, train_size=100)
@@ -54,15 +56,16 @@ def model1(x_train,y_train,x_test,y_test):
     #compiling the model
     model.compile(optimizer='sgd',loss='mean_squared_error',metrics=['accuracy'])
     hist = model.fit(x_train, y_train,epochs=100, verbose=0,validation_data=(x_test,y_test))
-    #print(hist)
+    print(hist)
     y_pred=model.predict(x_test)
     #print("NN Prediction- ",y_pred)
     #print(model.evaluate(x_test, y_test))
     filename="NN.sav"
     joblib.dump(model,filename)
-    print("Neural Network Prediction Done")
+    print("Neural Network Prediction")
+    print(y_pred)
     return y_pred
-NNpred=model1(x_train,y_train,x_test,y_test)
+#NNpred=model1(x_train,y_train,x_test,y_test)
 
 #Decission Tree Regressor Model
 def model2(x_train,y_train,x_test,y_test):
@@ -76,7 +79,6 @@ def model2(x_train,y_train,x_test,y_test):
     y_pred = DTRModel.predict(x_test)
     print("Predicted DTR Model")
     return y_pred    
-    
 DTRpred=model2(x_train,y_train,x_test,y_test)
 
 #Linear Regression Model
@@ -99,12 +101,13 @@ LRpred=model3(x_train,y_train,x_test)
 #Random Forest Regressor
 def model4(x_train,y_train,x_test):
     #random forest
-    result=0
     RFRModel=RandomForestRegressor(n_estimators=10,random_state=0)
     RFRModel.fit(x_train,y_train)
     y_pred=RFRModel.predict(x_test)
+    print(y_pred)
     filename='RFR.sav'
     joblib.dump(RFRModel,filename)
+    print("Predicted Random Forest Regressor")
     return y_pred
 RFRpred=model4(x_train,y_train,x_test)
 
@@ -143,73 +146,63 @@ def home(request):
 
 #Analyses Page view function
 def analysis(request):
-    # #loading prediction models
-    # DTRModel=joblib.load('DTR.sav')
-    # LRModel=joblib.load("LR.sav")
-    # NNModel=joblib.load("NN.sav")
-    # #loading classifier models
-    # NBModel=joblib.load('NB.sav')
-    # DTCModel=joblib.load('DTC.sav')
     from sklearn import metrics
-    print('Mean Absolute Error LR:', metrics.mean_absolute_error(y_test, LRpred))
-    print('Mean Squared Error LR:', metrics.mean_squared_error(y_test, LRpred))
-    print('Root Mean Squared Error LR:', np.sqrt(metrics.mean_squared_error(y_test, LRpred)))
     context={
-            "NNModel":
+        'Predictions':
+        [
+        {
+            "Model":"Decision Tree Regressor",
+            "Accuracy":round(metrics.r2_score(y_test, DTRpred)*100,2),
+            "MeanSquareError":round(metrics.mean_squared_error(y_test, DTRpred),2),
+            "RootMeanSquaredError":round(np.sqrt(metrics.mean_squared_error(y_test, DTRpred)),2)
+        },
+        {
+            "Model":'Linear Regression',
+            "Accuracy":round(metrics.r2_score(y_test, LRpred)*100,2),
+            "MeanSquareError":round(metrics.mean_squared_error(y_test, LRpred),2),
+            "RootMeanSquaredError":round(np.sqrt(metrics.mean_squared_error(y_test, LRpred)),2)
+        },
+        {
+            "Model":"Random Forest Regressor",
+            "Accuracy":round(metrics.r2_score(y_test, RFRpred)*100,2),
+            "MeanSquareError":round(metrics.mean_squared_error(y_test, RFRpred),2),
+            "RootMeanSquaredError":round(np.sqrt(metrics.mean_squared_error(y_test, RFRpred)),2)
+        }
+        
+        ]
+        ,"Classification":
+        [    
                 {
-                    "MeanAbosoluteError":metrics.mean_absolute_error(y_test, NNpred),
-                    "MeanSquareError":metrics.mean_squared_error(y_test, NNpred),
-                    "RootMeanSquaredError":np.sqrt(metrics.mean_squared_error(y_test, NNpred))
+                    "Model":"Decision Tree Classifier",
+                    "Accuracy":"",
+                    "ConfusionMatrix":"",
+                    "ClassificationReport":""
                 },
-            "DTRModel":
                 {
-                    "MeanAbosoluteError":metrics.mean_absolute_error(y_test, DTRpred),
-                    "MeanSquareError":metrics.mean_squared_error(y_test, DTRpred),
-                    "RootMeanSquaredError":np.sqrt(metrics.mean_squared_error(y_test, DTRpred))
-                },
-            'LRModel':
-                {
-                    "MeanAbosoluteError":metrics.mean_absolute_error(y_test, LRpred),
-                    "MeanSquareError":metrics.mean_squared_error(y_test, LRpred),
-                    "RootMeanSquaredError":np.sqrt(metrics.mean_squared_error(y_test, LRpred))
-                },
-            "RFRModel":
-                {
-                    "MeanAbosoluteError":metrics.mean_absolute_error(y_test, RFRpred),
-                    "MeanSquareError":metrics.mean_squared_error(y_test, RFRpred),
-                    "RootMeanSquaredError":np.sqrt(metrics.mean_squared_error(y_test, RFRpred))
-                },
-            "DTCModel":
-                {
-
-                },
-            "NBModel":
-                {
-
+                    "Model":"Naive Bayes ",
+                    "Accuracy":"",
+                    "ConfusionMatrix":"",
+                    "ClassificationReport":""
                 }
-            }
-
-
-
-
-
-
-
+        ]
+            
+    }
     
-    return render(request,"analysis.html",{})
+    return render(request,"analysis.html",context)
 
 def predict(request):
+    
     context={}
     error=False
     if request.method=="POST":
-        tenthmark=request.POST["tenth"]
-        twelth=request.POST['twelth']
-        sem1=request.POST['sem1']
-        sem2=request.POST['sem2']
-        sem3=request.POST['sem3']
-        sem4=request.POST['sem4']
-        sem5=request.POST['sem5']
-        sem6=request.POST['sem6']
+        tenthmark=float(request.POST["tenth"])
+        twelth=float(request.POST['twelth'])
+        sem1=float(request.POST['sem1'])
+        sem2=float(request.POST['sem2'])
+        sem3=float(request.POST['sem3'])
+        sem4=float(request.POST['sem4'])
+        sem5=float(request.POST['sem5'])
+        sem6=float(request.POST['sem6'])
         if twelth>100 or twelth<0 and tenthmark>100 or tenthmark<0:
             error=True
         if sem1>10 or sem1<0 and sem2>10 or sem2<0 and sem3>10 or sem3<0 and sem4>10 or sem4<0 and sem5>10 or sem5<0 and sem6>10 or sem6<0:
@@ -220,14 +213,55 @@ def predict(request):
             #Transforming input data
             unseenData=[[tenthmark,twelth,sem1,sem2,sem3,sem4,sem5]]
             eval_X=min_max_scaler.fit_transform(unseenData)
-            prediction=analyze_unseen_data(eval_X,sem6)
-            
-            return redirect(request,"prediction.html",{'prediction':prediction})
+            prediction=list(analyze_unseen_data(eval_X,sem6))
+            print(prediction)
+            return render(request,"prediction.html",{'prediction':float(prediction[1]),'actual':sem6})
     else:
         return render(request,"prediction.html",{})
 
 
 def analyze_unseen_data(eval_x,output):
     result=0
+    #loading prediction models
+    DTRModel=joblib.load('DTR.sav')
+    LRModel=joblib.load("LR.sav")
+    
+    result=DTRModel.predict(eval_x)
+    result2=LRModel.predict(eval_x)
+    #loading classifier models
+    #NBModel=joblib.load('NB.sav')
+    #DTCModel=joblib.load('DTC.sav')
+    return (result,result2)
 
-    return result
+
+#table of actual and predicted value
+def table_view(request):
+    import json
+    
+    test=y_test['sem6'].tolist()
+    print(type(test))
+    print(type(LRpred))
+    df = pd.DataFrame({'ActualValue':test,"LR":list(LRpred),"RFR":list(RFRpred),"DTR":list(DTRpred)})
+    
+    json_records = df.reset_index().to_json(orient ='records')
+    data = []
+    data = json.loads(json_records)
+    context = {'table': data}
+    return render(request,"table.html",context)
+
+#graph page
+def graph_view(request):
+
+    n=len(y_test)
+    x_axis=list(range(1,n+1))
+    import json
+    #xaxis data
+    x_axis=json.dumps(x_axis)
+    #test data
+    
+    test=json.dumps(y_test['sem6'].tolist())
+    
+    context={'x_axis':x_axis,'test_output':test,'lr_output':list(LRpred),"rfr_output":list(RFRpred)
+    #,"nn_output":list(NNpred)
+    ,"dtr_output":list(DTRpred)}
+    return render(request,"graph.html",context)

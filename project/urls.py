@@ -20,5 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home, name='home'),
     path('analysis/', views.analysis, name='analysis'),
-    path('predictions/', views.predict, name='predictions')
+    path('predictions/', views.predict, name='predictions'),
+    path("graphview/",views.graph_view,name='graphview'),
+    path("table/",views.table_view,name="table")
 ]

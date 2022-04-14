@@ -1,0 +1,175 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Predict Page</title>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="{% static 'app/img/apple-icon.png'%}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'app/img/favicon.ico'%}">
+    <!-- Load Require CSS -->
+    <link href="{% static 'app/css/bootstrap.min.css'%}" rel="stylesheet">
+    <!-- Font CSS -->
+    <link href="{% static 'app/css/boxicon.min.css'%}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Load Tempalte CSS -->
+    <link rel="stylesheet" href="{% static 'app/css/templatemo.css' %}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'app/css/custom.css'%}">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+
+<body>
+    {% include 'navbar.html'%}
+
+
+    <!-- Start Graph -->
+    <div id="chart" class="mx-auto col-10">
+
+    </div>
+    <!-- End Graph -->
+
+
+    </div>
+
+
+    <!-- Start Feature Work -->
+
+    <!-- End Feature Work -->
+
+
+    <!-- Start Footer -->
+    <div class="w-100 bg-primary py-3">
+        <div class="container">
+            <div class="row pt-2">
+                <div class="col-lg-6 col-sm-12">
+                    <p class="text-lg-start text-center text-light light-300">
+                        © Group-36 BE C2
+                    </p>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <p class="text-lg-end text-center text-light light-300">
+                        Designed by <a rel="sponsored" class="text-decoration-none text-light" href="https://templatemo.com/" target="_blank"><strong>Group 36 C22</strong></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- End Footer -->
+
+    <!-- Apex Chart  -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        var x_axis = JSON.parse('{{x_axis}}');
+        var test_output = JSON.parse('{{test_output}}');
+        test_output = test_output.map(function(each_element) {
+            return Number(each_element.toFixed(2));
+        });
+        var lr_output = JSON.parse("{{lr_output}}");
+        lr_output = lr_output.map(function(each_element) {
+            return Number(each_element.toFixed(2));
+        });
+        var rfr_output = JSON.parse("{{rfr_output}}")
+        rfr_output = rfr_output.map(function(each_element) {
+            return Number(each_element.toFixed(2));
+        });
+        var dtr_output = JSON.parse("{{dtr_output}}")
+        dtr_output = dtr_output.map(function(each_element) {
+            return Number(each_element.toFixed(2));
+        })
+        console.log(rfr_output);
+        var options = {
+            series: [{
+                name: "Test Data",
+                data: test_output
+
+            }, {
+                name: "Linear Regression",
+                data: lr_output
+            }, {
+                name: "Random Forest Regression",
+                data: rfr_output
+            }, {
+                name: "Decision Tree Regressor",
+                data: dtr_output
+            }],
+            chart: {
+                width: '100%',
+                height: 500,
+                type: 'line',
+                zoom: {
+                    enabled: true,
+                    type: 'y',
+                    autoScaleYaxis: true,
+                    zoomedArea: {
+                        fill: {
+                            color: '#90CAF9',
+                            opacity: 0.3
+                        },
+                        stroke: {
+                            color: '#0D47A1',
+                            opacity: 0.4,
+                            width: 1
+                        }
+                    }
+                }
+            },
+            colors: ['#2E93fA', '#66DA26', '#546E7A', '#E91E63'],
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'straight'
+            },
+            title: {
+                text: 'Predicted of Different Algorithm',
+                align: 'left'
+            },
+            grid: {
+                row: {
+                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                    opacity: 0.5
+                },
+            },
+            xaxis: {
+                categories: x_axis,
+                title: {
+                    text: "Number of Instance"
+                }
+            },
+            yaxis: {
+                show: true,
+                title: {
+                    text: 'Predictions'
+                },
+                tickAmount: 1,
+
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right',
+                floating: true,
+                offsetY: -25,
+                offsetX: -5
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    </script>
+    <!-- Bootstrap -->
+
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+</body>
+
+</html>
