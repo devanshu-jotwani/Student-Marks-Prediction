@@ -31,14 +31,14 @@ https://templatemo.com/tm-561-purple-buzz
     {% include 'navbar.html'%}
     <!-- Close Header -->
 
-    {% if prediction %}
+    {% if lrprediction %}
     <!-- Start Banner Hero -->
     <div id="work_banner" class="banner-wrapper bg-light w-100 py-5">
         <div class="banner-vertical-center-work container text-light d-flex justify-content-center align-items-center py-5 p-0">
             <div class="banner-content col-lg-8 col-12  text-center">
                 <h1 class="banner-heading h2 display-3 pb-5 semi-bold-600 typo-space-line-center">Predicted Marks </h1>
-                <h3>Actual Score Entered: {{actual}}</h3>
-                <h3>Predicted Value: {{prediction}} </h3>
+                <h3>Actual Decission Tree Regressor : {{dtrprediction}}</h3>
+                <h3>Linear Regression Predicted Value: {{lrprediction}} </h3>
             </div>
         </div>
     </div>
@@ -97,12 +97,12 @@ https://templatemo.com/tm-561-purple-buzz
                                 <label for="floatingname light-300">Enter Semester 5 Result</label>
                             </div>
                         </div>
-                        <div class="col-lg-12 mb-2">
+                        <!-- <div class="col-lg-12 mb-2"> 
                             <div class="form-floating">
                                 <input type="text" class="form-control form-control-lg light-300" id="floatingname" name="sem6" placeholder="Enter Semester 4 Results">
                                 <label for="floatingname light-300">Enter Semester 6 Result</label>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-lg-10 mb-2">
                             <div>
                                 <input class="btn btn-md btn-primary " type="submit" value="Predict">
