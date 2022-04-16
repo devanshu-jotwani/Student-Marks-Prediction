@@ -128,42 +128,44 @@ def home(request):
 #Analyses Page view function
 def analysis(request):
     from sklearn import metrics
+    DTRModel=joblib.load("DTR.sav")
+    LRModel=joblib.load("LR.sav")
+    RFRModel=joblib.load("RFR.sav")
     context={
         'Predictions':
         [
         {
             "Model":"Decision Tree Regressor",
-            "Accuracy":abs(round(metrics.r2_score(y_test.iloc[:,0], DTRpred)*100,2)),
+            "Accuracy":round(DTRModel.score(x_test,y_test.iloc[:,0])*100,2),
             "MeanSquareError":round(metrics.mean_squared_error(y_test.iloc[:,0], DTRpred)*100,2),
-            "RootMeanSquaredError":round(np.sqrt(metrics.mean_squared_error(y_test.iloc[:,0], DTRpred))*100,2)
+            "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,0], DTRpred)*100,2)
         },
         {
             "Model":'Linear Regression',
-            "Accuracy":round(metrics.r2_score(y_test.iloc[:,0], LRpred)*100,2),
+            "Accuracy":round(LRModel.score(x_test,y_test.iloc[:,0])*100,2),
             "MeanSquareError":round(metrics.mean_squared_error(y_test.iloc[:,0], LRpred)*100,2),
-            "RootMeanSquaredError":round(np.sqrt(metrics.mean_squared_error(y_test.iloc[:,0], LRpred))*100,2)
+            "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,0], LRpred)*100,2)
         },
         {
             "Model":"Random Forest Regressor",
             "Accuracy":round(metrics.r2_score(y_test.iloc[:,0], RFRpred)*100,2),
             "MeanSquareError":round(metrics.mean_squared_error(y_test.iloc[:,0], RFRpred)*100,2),
-            "RootMeanSquaredError":round(np.sqrt(metrics.mean_squared_error(y_test.iloc[:,0], RFRpred))*100,2)
+            "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,0], RFRpred)*100,2)
         }
-        
         ]
         ,"Classification":
         [    
                 {
                     "Model":"Decision Tree Classifier",
                     "Accuracy":round(metrics.accuracy_score(y_test['class'],DTCpred)*100,2),
-                    "ConfusionMatrix":"",
-                    "ClassificationReport":""
+                    "MeanSquaredError":round(metrics.mean_squared_error(y_test.iloc[:,1], DTCpred)*100,2),
+                    "RecallScore":round(metrics.recall_score(y_test['class'],DTCpred)*100,2)
                 },
                 {
                     "Model":"Naive Bayes ",
                     "Accuracy":round(metrics.accuracy_score(y_test['class'],NBpred)*100,2),
-                    "ConfusionMatrix":"",
-                    "ClassificationReport":""
+                    "MeanSquaredError":round(metrics.mean_squared_error(y_test.iloc[:,1], NBpred)*100,2),
+                    "RecallScore":round(metrics.recall_score(y_test['class'],NBpred)*100,2)
                 }
         ]
             
@@ -173,6 +175,7 @@ def analysis(request):
 
 def predict(request):
     error=False
+    unseenData=[[]]
     if request.method=="POST":
         tenthmark=float(request.POST["tenth"])
         twelth=float(request.POST['twelth'])
@@ -180,21 +183,22 @@ def predict(request):
         sem2=float(request.POST['sem2'])
         sem3=float(request.POST['sem3'])
         sem4=float(request.POST['sem4'])
-        sem5=float(request.POST['sem5'])
+        #sem5=float(request.POST['sem5'])
         # sem6=float(request.POST['sem6'])
         if twelth>100 or twelth<0 and tenthmark>100 or tenthmark<0:
             error=True
-        if sem1>10 or sem1<0 and sem2>10 or sem2<0 and sem3>10 or sem3<0 and sem4>10 or sem4<0 and sem5>10 or sem5<0:
+        if sem1>10 or sem1<0 and sem2>10 or sem2<0 and sem3>10 or sem3<0 and sem4>10 or sem4<0 :#and sem5>10 or sem5<0
             error=True
         if error:
             return render(request,"prediction.html",{error:error})
         else:
             #Transforming input data
+            
             unseenData=[[tenthmark,twelth,sem1,sem2,sem3,sem4]]
             eval_X=min_max_scaler.fit_transform(unseenData)
             prediction=list(analyze_unseen_data(eval_X))
             print("Predicted Values are",prediction)
-            return render(request,"prediction.html",{'dtrprediction':float(prediction[0]),'lrprediction':float(prediction[1]),'nbprediction':prediction[2],'dtcprediction':prediction[3]})
+            return render(request,"prediction.html",{'dtrprediction':float(prediction[0]),'lrprediction':float(prediction[1]),"rfrprediction":float(prediction[4]),'nbprediction':prediction[2],'dtcprediction':prediction[3]})
     else:
         return render(request,"prediction.html",{})
 
@@ -204,16 +208,18 @@ def analyze_unseen_data(eval_x):
     #loading prediction models
     DTRModel=joblib.load('DTR.sav')
     LRModel=joblib.load("LR.sav")
-    
-    DTRresult=DTRModel.predict(eval_x)
-    LRresult=LRModel.predict(eval_x)
+    RFRModel=joblib.load("RFR.sav")
+    DTRresult=round(float(DTRModel.predict(eval_x)),2)
+    LRresult=round(float(LRModel.predict(eval_x)),2)
+    RFRresult=round(float(RFRModel.predict(eval_x)),2)
     #loading classifier models
     NBModel=joblib.load('NB.sav')
     DTCModel=joblib.load('DTC.sav')
     NBresult=int(NBModel.predict(eval_x))
     DTCresult=int(DTCModel.predict(eval_x))
-    
-    return (DTRresult,LRresult,NBresult,DTCresult)
+
+    #print(DTCModel.predict([[]]))
+    return (DTRresult,LRresult,NBresult,DTCresult,RFRresult)
 
 
 #table of actual and predicted value

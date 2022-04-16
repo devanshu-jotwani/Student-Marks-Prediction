@@ -37,8 +37,10 @@ https://templatemo.com/tm-561-purple-buzz
         <div class="banner-vertical-center-work container text-light d-flex justify-content-center align-items-center py-5 p-0">
             <div class="banner-content col-lg-8 col-12  text-center">
                 <h1 class="banner-heading h2 display-3 pb-5 semi-bold-600 typo-space-line-center">Predicted Marks </h1>
-                <h3>Actual Decission Tree Regressor : {{dtrprediction}}</h3>
-                <h3>Linear Regression Predicted Value: {{lrprediction}} </h3>
+                <h3 id="dtr">Decission Tree Regressor : {{dtrprediction}}</h3>
+                <h3 id="lr">Linear Regression Prediction: {{lrprediction}} </h3>
+                <h3 id="rfr">Random Forest Regression Prediction: {{rfrprediction}} </h3>
+                <h3 id="dtc">Pass/Fail: {{dtcprediction}} </h3>
             </div>
         </div>
     </div>
@@ -91,12 +93,12 @@ https://templatemo.com/tm-561-purple-buzz
                                 <label for="floatingname light-300">Enter Semester 4 Result</label>
                             </div>
                         </div>
-                        <div class="col-lg-12 mb-2">
+                        <!-- <div class="col-lg-12 mb-2">
                             <div class="form-floating">
                                 <input type="text" class="form-control form-control-lg light-300" id="floatingname" name="sem5" placeholder="Enter Semester 4 Results">
                                 <label for="floatingname light-300">Enter Semester 5 Result</label>
                             </div>
-                        </div>
+                        </div> -->
                         <!-- <div class="col-lg-12 mb-2"> 
                             <div class="form-floating">
                                 <input type="text" class="form-control form-control-lg light-300" id="floatingname" name="sem6" placeholder="Enter Semester 4 Results">
@@ -149,31 +151,8 @@ https://templatemo.com/tm-561-purple-buzz
     <script>
         fsLightboxInstances['gallery'].props.loadOnlyCurrentSource = true;
     </script>
-    <!-- Load jQuery require for isotope -->
-    <script src="assets/js/jquery.min.js"></script>
-    <!-- Isotope -->
-    <script src="assets/js/isotope.pkgd.js"></script>
-    <!-- Page Script -->
-    <script>
-        $(window).load(function() {
-            // init Isotope
-            var $projects = $('.projects').isotope({
-                itemSelector: '.project',
-                layoutMode: 'fitRows'
-            });
-            $(".filter-btn").click(function() {
-                var data_filter = $(this).attr("data-filter");
-                $projects.isotope({
-                    filter: data_filter
-                });
-                $(".filter-btn").removeClass("active");
-                $(".filter-btn").removeClass("shadow");
-                $(this).addClass("active");
-                $(this).addClass("shadow");
-                return false;
-            });
-        });
-    </script>
+
+
     <!-- Templatemo -->
     <script src="assets/js/templatemo.js"></script>
     <!-- Custom -->

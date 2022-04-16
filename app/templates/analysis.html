@@ -36,7 +36,7 @@
                 <th>Model</th>
                 <th>Accuracy</th>
                 <th>Mean Square Error</th>
-                <th>Root Mean Squared Error</th>
+                <th>Mean Absolute Error</th>
             </tr>
         </thead>
 
@@ -47,7 +47,7 @@
                 <td>{{output.Model}}</td>
                 <td>{{output.Accuracy}}%</td>
                 <td>{{output.MeanSquareError}}%</td>
-                <td>{{output.RootMeanSquaredError}}%</td>
+                <td>{{output.MeanAbsoluteError}}%</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -60,8 +60,8 @@
             <tr>
                 <th>Model</th>
                 <th>Accuracy</th>
-                <th>Confusion Matrix</th>
-                <th>Classification Report</th>
+                <th>Mean Square Error</th>
+                <th>Recall Score</th>
             </tr>
         </thead>
         <tbody>
@@ -69,8 +69,8 @@
             <tr>
                 <td>{{output.Model}}</td>
                 <td>{{output.Accuracy}} % </td>
-                <td>{{output.ConfusionMatrix}} % </td>
-                <td>{{output.ClassificationReport}} % </td>
+                <td>{{output.MeanSquaredError}} % </td>
+                <td>{{output.RecallScore}} % </td>
 
             </tr>
             {% endfor %}
