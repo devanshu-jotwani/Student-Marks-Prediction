@@ -45,9 +45,9 @@
             {% for output in Predictions %}
             <tr>
                 <td>{{output.Model}}</td>
-                <td>{{output.Accuracy}}%</td>
-                <td>{{output.MeanSquareError}}%</td>
-                <td>{{output.MeanAbsoluteError}}%</td>
+                <td><span class="accuracy">{{output.Accuracy}}</span>%</td>
+                <td><span class="error">{{output.MeanSquareError}}</span>%</td>
+                <td><span class="absoluteerror"></span>{{output.MeanAbsoluteError}}%</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -79,7 +79,7 @@
 
     </div>
 
-
+    <script src="{%static 'app/js/analysis.js'%}"></script>
 </body>
 
 </html>

@@ -47,7 +47,7 @@ x_train,x_test,y_train,y_test=train_test_split(X_scale,y, train_size=.85,shuffle
 #Decission Tree Regressor Model
 def model2(x_train,y_train,x_test):
     #model= DTR 
-    DTRModel = DecisionTreeRegressor()
+    DTRModel = DecisionTreeRegressor(max_depth=7)
     DTRModel.fit(x_train, y_train)
     # save the model to disk
     filename = 'DTR.sav'
@@ -80,7 +80,7 @@ LRpred=model3(x_train,y_train.iloc[:,0],x_test)
 #Random Forest Regressor
 def model4(x_train,y_train,x_test):
     #random forest
-    RFRModel=RandomForestRegressor(n_estimators=10,random_state=0)
+    RFRModel=RandomForestRegressor(n_estimators=40,random_state=0)
     RFRModel.fit(x_train,y_train)
     y_pred=RFRModel.predict(x_test)
     
@@ -220,6 +220,7 @@ def analyze_unseen_data(eval_x):
 
     #print(DTCModel.predict([[]]))
     return (DTRresult,LRresult,NBresult,DTCresult,RFRresult)
+
 
 
 #table of actual and predicted value
