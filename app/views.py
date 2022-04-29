@@ -26,26 +26,58 @@ df=pd.read_csv("../allbranchdata.csv")
 #df=pd.read_csv("../classifierdata.csv")
 
 #dividing the column into x and y
-x=df[['sem1','sem2','sem3','sem4']]
-y=df[['sem5','class']]
+x=df[['10th','12th','sem1%','sem2%','sem3%','sem4%']]
+y=df[['sem5%','class','sem5']]
 
 '''
 Preprocessing data. Scaling input data so
 that all the input data lie between 0 to 1
 '''
-#min_max_scaler = preprocessing.MinMaxScaler()
+min_max_scaler = preprocessing.MinMaxScaler()
 #X_scale = min_max_scaler.fit_transform(x)
 X_scale=x
-#print("Before Scaling \n",x)
-#print("After Scaling \n",X_scale)
 
 #splitting data into train ,test and validation data
 x_train,x_test,y_train,y_test=train_test_split(X_scale,y, train_size=.85,random_state=2)
-#print(x_train.shape,x_test.shape)
 
 
+def get_percentage(sem1,sem2,sem3,sem4):
+    if sem1<7:
+        sem1=sem1*7.1+12
+    else:
+        sem1=sem1*7.4+12
+    if sem2<7:
+        sem2=sem2*7.1+12
+    else:
+        sem2=sem2*7.4+12
+    if sem3<7:
+        sem3=sem3*7.1+12
+    else:
+        sem3=sem3*7.4+12
+    if sem4<7:
+        sem4=sem4*7.1+12
+    else:
+        sem4=sem4*7.4+12
+    return sem1,sem2,sem3,sem4
 
+
+def get_pointer(sem5):
+    if sem5<63.80:
+        sem5=(sem5-12)/7.1
+    else:
+        sem5=(sem5-12)/7.4
+    return sem5
 #Decission Tree Regressor Model
+
+def pointer(li):
+    # Python code to illustrate
+    # map() with lambda()
+    # to get double of a list.
+    
+
+    final_list = list(map(lambda x: round(get_pointer(x),2), li))
+    return final_list
+
 def model2(x_train,y_train,x_test):
     #model= DTR 
     DTRModel = DecisionTreeRegressor(max_depth=7)
@@ -53,30 +85,30 @@ def model2(x_train,y_train,x_test):
     # save the model to disk
     filename = 'DTR.sav'
     joblib.dump(DTRModel, filename)
-    output=DTRModel.predict([[6.35,6.7,6.8,7.8]])
-    print("LR prediction:",output)
+    # sem1,sem2,sem3,sem4 = get_percentage(3.85,3.9,4.96,4.3)
+    # output=DTRModel.predict([[51.84,49.84,sem1,sem2,sem3,sem4]])
+    # print("DTR prediction:",output)
     y_pred = DTRModel.predict(x_test)
     print("Predicted DTR Model")
     return y_pred    
-DTRpred=model2(x_train,y_train.iloc[:,0],x_test)
+DTRpred=pointer(model2(x_train,y_train.iloc[:,0],x_test))
 
 #Linear Regression Model
 def model3(x_train,y_train,x_test):
     #model=LR
     LRModel=LinearRegression()
     LRModel.fit(x_train,y_train)
-     
     y_pred=LRModel.predict(x_test)
-    
     y_pred=[round(item,2) for item in y_pred]
-    print(y_pred)
     filename='LR.sav'
     joblib.dump(LRModel,filename)
     
     print("Predicted Linear regression")
-    
+    # sem1,sem2,sem3,sem4 = get_percentage(3.85,3.9,4.96,4.3)
+    # output=LRModel.predict([[51.84,49.84,sem1,sem2,sem3,sem4]])
+    # print("LR prediction:",output)
     return y_pred
-LRpred=model3(x_train,y_train.iloc[:,0],x_test)
+LRpred=pointer(model3(x_train,y_train.iloc[:,0],x_test))
 
 
 #Random Forest Regressor
@@ -90,7 +122,7 @@ def model4(x_train,y_train,x_test):
     joblib.dump(RFRModel,filename)
     print("Predicted Random Forest Regressor")
     return y_pred
-RFRpred=model4(x_train,y_train.iloc[:,0],x_test)
+RFRpred=pointer(model4(x_train,y_train.iloc[:,0],x_test))
 
 #Naive Bayes Model
 def model5(x_train,y_train,x_test):
@@ -104,7 +136,6 @@ def model5(x_train,y_train,x_test):
     joblib.dump(NBModel,filename)
     print("Predicted Naive Bayes Classifier")
     return y_pred
-
 NBpred=model5(x_train,y_train['class'],x_test)
 
 #Decision tree classifier
@@ -132,27 +163,27 @@ def analysis(request):
     from sklearn import metrics
     DTRModel=joblib.load("DTR.sav")
     LRModel=joblib.load("LR.sav")
-    #RFRModel=joblib.load("RFR.sav")
+    RFRModel=joblib.load("RFR.sav")
     context={
         'Predictions':
         [
         {
             "Model":"Decision Tree Regressor",
             "Accuracy":round(DTRModel.score(x_test,y_test.iloc[:,0])*100,2),
-            "MeanSquareError":round(metrics.mean_squared_error(y_test.iloc[:,0], DTRpred)*100,2),
-            "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,0], DTRpred)*100,2)
+            "MeanSquareError":round(metrics.mean_squared_error(y_test.iloc[:,2], DTRpred)*100,2),
+            "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,2], DTRpred)*100,2)
         },
         {
             "Model":'Linear Regression',
             "Accuracy":round(LRModel.score(x_test,y_test.iloc[:,0])*100,2),
-            "MeanSquareError":round(metrics.mean_squared_error(y_test.iloc[:,0], LRpred)*100,2),
-            "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,0], LRpred)*100,2)
+            "MeanSquareError":round(metrics.mean_squared_error(y_test.iloc[:,2], LRpred)*100,2),
+            "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,2], LRpred)*100,2)
         },
         {
             "Model":"Random Forest Regressor",
-            "Accuracy":round(metrics.r2_score(y_test.iloc[:,0], RFRpred)*100,2),
-            "MeanSquareError":round(metrics.mean_squared_error(y_test.iloc[:,0], RFRpred)*100,2),
-            "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,0], RFRpred)*100,2)
+            "Accuracy":round(RFRModel.score(x_test,y_test.iloc[:,0])*100,2),
+            "MeanSquareError":round(metrics.mean_squared_error(y_test.iloc[:,2], RFRpred)*100,2),
+            "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,2], RFRpred)*100,2)
         }
         ]
         ,
@@ -180,7 +211,7 @@ def predict(request):
     error=False
     unseenData=[[]]
     if request.method=="POST":
-        tenthmark=float(request.POST["tenth"])
+        tenth=float(request.POST["tenth"])
         twelth=float(request.POST['twelth'])
         sem1=float(request.POST['sem1'])
         sem2=float(request.POST['sem2'])
@@ -188,7 +219,7 @@ def predict(request):
         sem4=float(request.POST['sem4'])
         #sem5=float(request.POST['sem5'])
         # sem6=float(request.POST['sem6'])
-        if twelth>100 or twelth<0 and tenthmark>100 or tenthmark<0:
+        if twelth>100 or twelth<0 and tenth>100 or tenth<0:
             error=True
         if sem1>10 or sem1<0 and sem2>10 or sem2<0 and sem3>10 or sem3<0 and sem4>10 or sem4<0 :#and sem5>10 or sem5<0
             error=True
@@ -196,8 +227,8 @@ def predict(request):
             return render(request,"prediction.html",{error:error})
         else:
             #Transforming input data
-            
-            unseenData=[[sem1,sem2,sem3,sem4]]
+            sem1,sem2,sem3,sem4 = get_percentage(sem1,sem2,sem3,sem4)
+            unseenData=[[tenth,twelth,sem1,sem2,sem3,sem4]]
             #eval_X=min_max_scaler.fit_transform(unseenData)
             eval_X=unseenData
             prediction=list(analyze_unseen_data(eval_X))
@@ -214,18 +245,25 @@ def analyze_unseen_data(eval_x):
     DTRModel=joblib.load('DTR.sav')
     LRModel=joblib.load("LR.sav")
     RFRModel=joblib.load("RFR.sav")
-    DTRresult=round(float(DTRModel.predict(eval_x)),2)
-    LRresult=round(float(LRModel.predict(eval_x)),2)
-    RFRresult=round(float(RFRModel.predict(eval_x)),2)
+    DTRresult=round(get_pointer(float(DTRModel.predict(eval_x))),2)
+    LRresult=round(get_pointer(float(LRModel.predict(eval_x))),2)
+    RFRresult=round(get_pointer(float(RFRModel.predict(eval_x))),2)
     #loading classifier models
     NBModel=joblib.load('NB.sav')
     DTCModel=joblib.load('DTC.sav')
     NBresult=int(NBModel.predict(eval_x))
     DTCresult=int(DTCModel.predict(eval_x))
-
-    # print(DTCModel.predict([[85.80,]]))
+    if NBresult == 1:
+        NBResult = "Pass"
+    else:
+        NBResult = "Fail"
+    if DTCresult == 1:
+        DTCResult = "Pass"
+    else:
+        DTCResult = "Fail"
+    
     return (DTRresult,LRresult,RFRresult
-    ,NBresult,DTCresult
+    ,NBResult,DTCResult
     )
 
 
@@ -234,7 +272,7 @@ def analyze_unseen_data(eval_x):
 def table_view(request):
     import json
     
-    test=y_test.iloc[:,0].tolist()
+    test=pointer(y_test.iloc[:,0].tolist())
 
     df = pd.DataFrame({'ActualValue':test,"LR":list(LRpred),"RFR":list(RFRpred),"DTR":list(DTRpred)})
     
