@@ -26,20 +26,21 @@ df=pd.read_csv("../allbranchdata.csv")
 #df=pd.read_csv("../classifierdata.csv")
 
 #dividing the column into x and y
-x=df[['10th','12th','sem1','sem2','sem3','sem4']]
+x=df[['sem1','sem2','sem3','sem4']]
 y=df[['sem5','class']]
 
 '''
 Preprocessing data. Scaling input data so
 that all the input data lie between 0 to 1
 '''
-min_max_scaler = preprocessing.MinMaxScaler()
-X_scale = min_max_scaler.fit_transform(x)
+#min_max_scaler = preprocessing.MinMaxScaler()
+#X_scale = min_max_scaler.fit_transform(x)
+X_scale=x
 #print("Before Scaling \n",x)
 #print("After Scaling \n",X_scale)
 
 #splitting data into train ,test and validation data
-x_train,x_test,y_train,y_test=train_test_split(X_scale,y, train_size=.85,shuffle=True)
+x_train,x_test,y_train,y_test=train_test_split(X_scale,y, train_size=.85,random_state=2)
 #print(x_train.shape,x_test.shape)
 
 
@@ -52,7 +53,8 @@ def model2(x_train,y_train,x_test):
     # save the model to disk
     filename = 'DTR.sav'
     joblib.dump(DTRModel, filename)
-
+    output=DTRModel.predict([[6.35,6.7,6.8,7.8]])
+    print("LR prediction:",output)
     y_pred = DTRModel.predict(x_test)
     print("Predicted DTR Model")
     return y_pred    
@@ -130,7 +132,7 @@ def analysis(request):
     from sklearn import metrics
     DTRModel=joblib.load("DTR.sav")
     LRModel=joblib.load("LR.sav")
-    RFRModel=joblib.load("RFR.sav")
+    #RFRModel=joblib.load("RFR.sav")
     context={
         'Predictions':
         [
@@ -153,7 +155,8 @@ def analysis(request):
             "MeanAbsoluteError":round(metrics.mean_absolute_error(y_test.iloc[:,0], RFRpred)*100,2)
         }
         ]
-        ,"Classification":
+        ,
+        "Classification":
         [    
                 {
                     "Model":"Decision Tree Classifier",
@@ -194,14 +197,16 @@ def predict(request):
         else:
             #Transforming input data
             
-            unseenData=[[tenthmark,twelth,sem1,sem2,sem3,sem4]]
-            eval_X=min_max_scaler.fit_transform(unseenData)
+            unseenData=[[sem1,sem2,sem3,sem4]]
+            #eval_X=min_max_scaler.fit_transform(unseenData)
+            eval_X=unseenData
             prediction=list(analyze_unseen_data(eval_X))
             print("Predicted Values are",prediction)
-            return render(request,"prediction.html",{'dtrprediction':float(prediction[0]),'lrprediction':float(prediction[1]),"rfrprediction":float(prediction[4]),'nbprediction':prediction[2],'dtcprediction':prediction[3]})
-    else:
-        return render(request,"prediction.html",{})
-
+            return render(request,"prediction.html",{'dtrprediction':float(prediction[0]),'lrprediction':float(prediction[1]),"rfrprediction":float(prediction[2]),
+                'nbprediction':prediction[3],'dtcprediction':prediction[4]
+                })
+    
+    return render(request,"prediction.html",{})
 
 def analyze_unseen_data(eval_x):
     
@@ -218,8 +223,10 @@ def analyze_unseen_data(eval_x):
     NBresult=int(NBModel.predict(eval_x))
     DTCresult=int(DTCModel.predict(eval_x))
 
-    #print(DTCModel.predict([[]]))
-    return (DTRresult,LRresult,NBresult,DTCresult,RFRresult)
+    # print(DTCModel.predict([[85.80,]]))
+    return (DTRresult,LRresult,RFRresult
+    ,NBresult,DTCresult
+    )
 
 
 
@@ -228,8 +235,7 @@ def table_view(request):
     import json
     
     test=y_test.iloc[:,0].tolist()
-    # print(type(test))
-    # print(type(LRpred))
+
     df = pd.DataFrame({'ActualValue':test,"LR":list(LRpred),"RFR":list(RFRpred),"DTR":list(DTRpred)})
     
     json_records = df.reset_index().to_json(orient ='records')
@@ -251,6 +257,6 @@ def graph_view(request):
     test=json.dumps(y_test['sem5'].tolist())
     
     context={'x_axis':x_axis,'test_output':test,'lr_output':list(LRpred),"rfr_output":list(RFRpred)
-    #,"nn_output":list(NNpred)
+    
     ,"dtr_output":list(DTRpred)}
     return render(request,"graph.html",context)
